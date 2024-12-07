@@ -1,5 +1,2 @@
-pandas
-numpy
-matplotlib
-seaborn
-streamlit
+pandas==2.1.4        # For data manipulation and analysis
+numpy==1.26.4        # For numerical computations
