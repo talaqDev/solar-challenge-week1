@@ -1,8 +1,8 @@
-Solar Energy Analysis Project
-Project Overview
+#Solar Energy Analysis Project
+#Project Overview
 This project performs comprehensive data analysis and visualization on solar energy datasets from various regions (e.g., Benin, Sierra Leone, Togo). The goal is to understand solar radiation patterns, wind conditions, temperature influences, and other environmental factors using time series analysis, correlation analysis, and machine learning techniques. The project also includes data cleaning and outlier detection for accurate insights.
 
-Key Features
+#Key Features
 Data Quality Check: Identifies missing values, outliers, and handles anomalies.
 Exploratory Data Analysis (EDA): Includes visualizations like time series, histograms, and correlation matrices.
 Wind Analysis: Uses wind roses and scatter plots to visualize wind speed and direction.
