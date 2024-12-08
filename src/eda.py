@@ -6,7 +6,6 @@ import seaborn as sns
 
 def data_quality_check(data, dataset_name):
     print(f"Data Quality Check for {dataset_name}:")
-    print(data.info())  
     print("Missing values:\n", data.isnull().sum())
     print("Negative GHI values:\n", data[data['GHI'] < 0]) 
     print("\n")
