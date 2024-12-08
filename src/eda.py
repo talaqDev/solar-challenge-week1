@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from windrose import WindroseAxes
+from scipy.stats import zscore
 
 
 def data_quality_check(data, dataset_name):
@@ -145,6 +146,79 @@ def plot_histograms(data, dataset_name, variables, bins=20):
 
 
 
+def calculate_z_scores(data, columns, threshold=3):
+    data = data.copy()
+    outlier_flags = []
+    
+    for col in columns:
+        if col in data.columns:
+            # Calculate Z-scores
+            data[f'{col}_zscore'] = zscore(data[col].dropna())
+            # Flag outliers
+            outliers = data[(data[f'{col}_zscore'].abs() > threshold)]
+            print(f"Outliers detected in {col} ({len(outliers)} points):")
+            print(outliers[[col, f'{col}_zscore']])
+            outlier_flags.append(outliers.index)
+
+    outlier_indices = set(idx for indices in outlier_flags for idx in indices)
+    data['Outliers'] = data.index.isin(outlier_indices)
+
+    return data
+
+def plot_bubble_chart(data, dataset_name, x_var, y_var, bubble_size_var, color_var=None):
+
+    plt.figure(figsize=(12, 8))
+    
+    if color_var:
+        scatter = plt.scatter(
+            data[x_var],
+            data[y_var],
+            s=data[bubble_size_var] * 10,  
+            c=data[color_var],
+            alpha=0.6,
+            cmap='viridis'
+        )
+        plt.colorbar(scatter, label=color_var)
+    else:
+        plt.scatter(
+            data[x_var],
+            data[y_var],
+            s=data[bubble_size_var] * 10,
+            alpha=0.6,
+            color='blue'
+        )
+    
+    plt.title(f'Bubble Chart - {dataset_name}')
+    plt.xlabel(x_var)
+    plt.ylabel(y_var)
+    plt.grid(True, linestyle='--', alpha=0.5)
+    plt.show()
+def drop_empty_columns(data):
+    null_columns = data.columns[data.isnull().all()]
+    print(f"Dropping empty columns: {list(null_columns)}")
+    return data.drop(columns=null_columns)
+def handle_missing_values(data):
+   
+    numeric_cols = data.select_dtypes(include='number').columns
+    data[numeric_cols] = data[numeric_cols].fillna(data[numeric_cols].median())
+    
+    critical_columns = ['GHI', 'DNI', 'DHI']
+    data = data.dropna(subset=critical_columns)
+    
+    return data
+
+def handle_anomalies(data, columns):
+    for col in columns:
+        if col in data.columns:
+            data[col] = data[col].apply(lambda x: np.nan if x < 0 else x)
+    return data
+
+def save_cleaned_data(data, file_name):
+    data.to_csv(file_name, index=True)
+    print(f"Cleaned dataset saved to {file_name}")
+
+
+
 def main():
     benin_data = pd.read_csv('../data/benin-malanville.csv')  
     sierra_leone_data = pd.read_csv('../data/sierraleone-bumbuna.csv')
@@ -161,9 +235,9 @@ def main():
     benin_data['WD'] = benin_data['WD'].apply(lambda x: np.nan if x < 0 else x)
     temp_humidity_vars = ['RH', 'Tamb', 'TModA', 'TModB', 'GHI', 'DNI', 'DHI']
     variables_to_plot = ['GHI', 'DNI', 'DHI', 'WS', 'WSgust', 'Tamb', 'TModA', 'TModB']
+    columns_to_analyze = ['GHI', 'DNI', 'DHI', 'Tamb', 'TModA', 'TModB', 'WS', 'WSgust']
+    cleaned_datasets = {}
 
-        
-    #Dataset
     benin_data['Timestamp'] = pd.to_datetime(benin_data['Timestamp'])
     benin_data.set_index('Timestamp', inplace=True)
     sierra_leone_data['Timestamp'] = pd.to_datetime(sierra_leone_data['Timestamp'])
@@ -200,7 +274,21 @@ def main():
         plot_temperature_humidity_correlation(data, name, temp_humidity_vars)
         plot_scatter_rh_temperature(data, name)
         plot_histograms(data, name, variables_to_plot)
+        updated_data = calculate_z_scores(data, columns_to_analyze)
+        data = drop_empty_columns(data)
+        data = handle_missing_values(data)
+        data = handle_anomalies(data, ['GHI', 'DNI', 'DHI'])
+        save_cleaned_data(data, f'{name.lower()}_cleaned.csv')
+        cleaned_datasets[name] = data
+        plot_bubble_chart(
+            data,
+            name,
+            x_var="Tamb",
+            y_var="GHI",
+            bubble_size_var="RH",
+            color_var="WS"
+        )
     for var in compare:
         comparision(var)
-        pass
+    
 main()
