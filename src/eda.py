@@ -131,6 +131,18 @@ def plot_scatter_rh_temperature(data, dataset_name):
     plt.tight_layout()
     plt.show()
 
+def plot_histograms(data, dataset_name, variables, bins=20):
+ 
+    for var in variables:
+        if var in data.columns:
+            plt.figure(figsize=(10, 6))
+            plt.hist(data[var].dropna(), bins=bins, color='blue', alpha=0.7, edgecolor='black')
+            plt.title(f'{var} Distribution - {dataset_name}')
+            plt.xlabel(var)
+            plt.ylabel('Frequency')
+            plt.grid(axis='y', linestyle='--', alpha=0.7)
+            plt.show()
+
 
 
 def main():
@@ -148,6 +160,8 @@ def main():
     benin_data['WS'] = benin_data['WS'].apply(lambda x: np.nan if x < 0 else x)
     benin_data['WD'] = benin_data['WD'].apply(lambda x: np.nan if x < 0 else x)
     temp_humidity_vars = ['RH', 'Tamb', 'TModA', 'TModB', 'GHI', 'DNI', 'DHI']
+    variables_to_plot = ['GHI', 'DNI', 'DHI', 'WS', 'WSgust', 'Tamb', 'TModA', 'TModB']
+
         
     #Dataset
     benin_data['Timestamp'] = pd.to_datetime(benin_data['Timestamp'])
@@ -185,6 +199,7 @@ def main():
         plot_wind_direction_variability(data, name)
         plot_temperature_humidity_correlation(data, name, temp_humidity_vars)
         plot_scatter_rh_temperature(data, name)
+        plot_histograms(data, name, variables_to_plot)
     for var in compare:
         comparision(var)
         pass
