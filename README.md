@@ -7,21 +7,33 @@ This project performs comprehensive data analysis and visualization on solar ene
 **Key Features**
 
 Data Quality Check: Identifies missing values, outliers, and handles anomalies.
+
 Exploratory Data Analysis (EDA): Includes visualizations like time series, histograms, and correlation matrices.
+
 Wind Analysis: Uses wind roses and scatter plots to visualize wind speed and direction.
+
 Temperature Analysis: Analyzes the influence of relative humidity on temperature and solar radiation.
+
 Bubble Charts: Visualizes relationships between solar radiation, temperature, wind speed, and humidity.
+
 Z-Score Analysis: Identifies significant outliers based on Z-scores.
+
 Data Cleaning: Handles missing data, drops unnecessary columns, and manages anomalies.
 
 **Technologies Used**
 
 Python: Programming language
+
 pandas: Data manipulation and analysis
+
 numpy: Numerical operations
+
 matplotlib: Data visualization
+
 seaborn: Statistical data visualization
+
 windrose: Wind rose visualizations
+
 scipy: Statistical functions (e.g., Z-score calculation)
 
 **Installation**
@@ -100,9 +112,5 @@ The variables used for correlation and visualization.
 
 The parameters for the plots (e.g., bin size for histograms).
 
-File Structure
 
-plaintext
-
-Copy code
        
