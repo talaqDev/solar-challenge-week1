@@ -103,6 +103,33 @@ def plot_wind_direction_variability(data, dataset_name):
     ax.set_xticklabels(labels)
     ax.set_title(f'Wind Direction Variability - {dataset_name}')
     plt.show()
+def plot_temperature_humidity_correlation(data, dataset_name, variables):
+    corr = data[variables].corr()
+    plt.figure(figsize=(10, 6))
+    sns.heatmap(corr, annot=True, cmap='coolwarm', fmt=".2f")
+    plt.title(f'Correlation Between RH, Temperature, and Radiation - {dataset_name}')
+    plt.show()
+
+def plot_scatter_rh_temperature(data, dataset_name):
+
+    plt.figure(figsize=(14, 7))
+    
+    # RH vs Temperature (Tamb)
+    plt.subplot(1, 2, 1)
+    plt.scatter(data['RH'], data['Tamb'], alpha=0.6, color='blue')
+    plt.title(f'RH vs Tamb - {dataset_name}')
+    plt.xlabel('Relative Humidity (%)')
+    plt.ylabel('Ambient Temperature (°C)')
+    
+    # RH vs GHI
+    plt.subplot(1, 2, 2)
+    plt.scatter(data['RH'], data['GHI'], alpha=0.6, color='orange')
+    plt.title(f'RH vs GHI - {dataset_name}')
+    plt.xlabel('Relative Humidity (%)')
+    plt.ylabel('Global Horizontal Irradiance (W/m²)')
+    
+    plt.tight_layout()
+    plt.show()
 
 
 
@@ -120,7 +147,7 @@ def main():
     radiation_temp_vars = ['GHI', 'DNI', 'DHI', 'TModA', 'TModB']
     benin_data['WS'] = benin_data['WS'].apply(lambda x: np.nan if x < 0 else x)
     benin_data['WD'] = benin_data['WD'].apply(lambda x: np.nan if x < 0 else x)
-
+    temp_humidity_vars = ['RH', 'Tamb', 'TModA', 'TModB', 'GHI', 'DNI', 'DHI']
         
     #Dataset
     benin_data['Timestamp'] = pd.to_datetime(benin_data['Timestamp'])
@@ -156,6 +183,9 @@ def main():
         plot_wind_vs_radiation(data, name)
         plot_wind_rose(data, name)
         plot_wind_direction_variability(data, name)
+        plot_temperature_humidity_correlation(data, name, temp_humidity_vars)
+        plot_scatter_rh_temperature(data, name)
     for var in compare:
         comparision(var)
+        pass
 main()
