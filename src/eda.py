@@ -42,6 +42,54 @@ def monthly_average_radiation(data, data_name):
     plt.show()
 
 
+def plot_correlation_matrix(data, dataset_name, variables):
+    """
+    Plots a correlation matrix for the specified variables.
+    Parameters:
+        data (pd.DataFrame): Dataset to analyze.
+        dataset_name (str): Name of the dataset.
+        variables (list): List of columns to include in the correlation matrix.
+    """
+    # Calculate correlation matrix
+    corr = data[variables].corr()
+    
+    # Plot heatmap
+    plt.figure(figsize=(10, 6))
+    sns.heatmap(corr, annot=True, cmap='coolwarm', fmt=".2f")
+    plt.title(f'Correlation Matrix - {dataset_name}')
+    plt.show()
+
+def plot_pairplot(data, dataset_name, variables):
+    """
+    Plots a pairplot for the specified variables.
+    Parameters:
+        data (pd.DataFrame): Dataset to analyze.
+        dataset_name (str): Name of the dataset.
+        variables (list): List of columns to include in the pairplot.
+    """
+    sns.pairplot(data[variables], diag_kind='kde', corner=True)
+    plt.suptitle(f'Pair Plot - {dataset_name}', y=1.02)
+    plt.show()
+def plot_wind_vs_radiation(data, dataset_name):
+    """
+    Plots scatterplots for wind conditions vs solar irradiance.
+    Parameters:
+        data (pd.DataFrame): Dataset to analyze.
+        dataset_name (str): Name of the dataset.
+    """
+    plt.figure(figsize=(14, 7))
+    plt.scatter(data['WS'], data['GHI'], alpha=0.7, label='WS vs GHI', color='blue')
+    plt.scatter(data['WSgust'], data['GHI'], alpha=0.7, label='WSgust vs GHI', color='green')
+    plt.title(f'Wind Speed vs Solar Irradiance - {dataset_name}')
+    plt.xlabel('Wind Speed (m/s)')
+    plt.ylabel('GHI (W/m²)')
+    plt.legend()
+    plt.show()
+
+
+
+
+
 
 def main():
     benin_data = pd.read_csv('../data/benin-malanville.csv')  
@@ -54,6 +102,7 @@ def main():
         "Togo": togo_data
     }
     compare = ['GHI', 'DNI', 'DHI', 'Tamb', 'ModA', 'ModB', 'TModA', 'TmodB']
+    radiation_temp_vars = ['GHI', 'DNI', 'DHI', 'TModA', 'TModB']
     
     #Dataset
     benin_data['Timestamp'] = pd.to_datetime(benin_data['Timestamp'])
@@ -80,11 +129,14 @@ def main():
         plt.show()
 
     for name, data in datasets.items():
-        data_quality_check(data, name)
-        summary_statistics(data, name)
-        radiation_over_time(data, name)
-        monthly_average_radiation(data, name)
-        pass
+        #data_quality_check(data, name)
+        #summary_statistics(data, name)
+        #radiation_over_time(data, name)
+        #monthly_average_radiation(data, name)
+        #plot_correlation_matrix(data, name, radiation_temp_vars)
+        #plot_pairplot(data, name, radiation_temp_vars)
+        plot_wind_vs_radiation(data, name)
     for var in compare:
-        comparision(var)
+        #comparision(var)
+        pass
 main()
