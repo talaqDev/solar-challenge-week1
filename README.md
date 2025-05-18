@@ -45,7 +45,7 @@ bash
 
 Copy code
 
-  git clone https://github.com/Hunegn/Moonlit.git
+  git clone https://github.com/talaqDev/solar-challenge-week1
 
 2. Install dependencies
 Make sure you have a Python 3 environment set up. Install the required libraries using requirements.txt:
